@@ -11,8 +11,8 @@ from fastapi import FastAPI
 import uvicorn
 
 # TOKEN = os.getenv("BOT_TOKEN")
-TOKEN = "8859657712:AAHvfQWEv5V3ztH7ZFv9nL1bep-4KAJ9q7g"
-GEMINI_API_KEY = "AQ.Ab8RN6I9qdIzCDZ1u_cZl6-nzBuZElhV3JzaVGK6Mj3DzPXzYw"
+TOKEN = os.getenv("BOT_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 genai.configure(api_key=GEMINI_API_KEY)
 
