@@ -1,16 +1,21 @@
-from flask import Flask
-import threading
 import os
 import asyncio
+import threading
+
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.types import Message
-import os
-TOKEN = "8859657712:AAHvfQWEv5V3ztH7ZFv9nL1bep-4KAJ9q7g"
+
+from fastapi import FastAPI
+import uvicorn
+
+# TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = "ТВОЙ_ТОКЕН"
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
+# ---------- Telegram ----------
 
 @dp.message(Command("start"))
 async def start_command(message: Message):
@@ -37,23 +42,30 @@ async def answer_message(message: Message):
 async def main():
     await dp.start_polling(bot)
 
-app = Flask(__name__)
 
-@app.route("/")
+def run_bot():
+    asyncio.run(main())
+
+
+# ---------- FastAPI ----------
+
+app = FastAPI()
+
+
+@app.get("/")
 def home():
-    return "Bot is alive!"
+    return {"status": "Bot is alive"}
 
-def run_web():
-    port = int(os.environ.get("PORT", 10000))
-    app.run(
-        host="0.0.0.0",
-        port=port,
-        debug=False,
-        use_reloader=False
-    )
+
+# ---------- Start ----------
 
 if __name__ == "__main__":
-    web_thread = threading.Thread(target=run_web, daemon=True)
-    web_thread.start()
+    threading.Thread(target=run_bot, daemon=True).start()
 
-    asyncio.run(main())
+    port = int(os.environ.get("PORT", 10000))
+
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=port
+    )
