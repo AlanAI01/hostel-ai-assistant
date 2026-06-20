@@ -45,8 +45,15 @@ def home():
 
 def run_web():
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=False,
+        use_reloader=False
+    )
 
 if __name__ == "__main__":
-    threading.Thread(target=run_web).start()
+    web_thread = threading.Thread(target=run_web, daemon=True)
+    web_thread.start()
+
     asyncio.run(main())
