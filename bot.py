@@ -1,3 +1,4 @@
+import google.generativeai as genai
 import os
 import asyncio
 import threading
@@ -10,7 +11,12 @@ from fastapi import FastAPI
 import uvicorn
 
 # TOKEN = os.getenv("BOT_TOKEN")
-TOKEN = "ТВОЙ_ТОКЕН"
+TOKEN = "8859657712:AAHvfQWEv5V3ztH7ZFv9nL1bep-4KAJ9q7g"
+GEMINI_API_KEY = "AQ.Ab8RN6I9qdIzCDZ1u_cZl6-nzBuZElhV3JzaVGK6Mj3DzPXzYw"
+
+genai.configure(api_key=GEMINI_API_KEY)
+
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -36,11 +42,30 @@ async def answer_message(message: Message):
         await message.answer("Здравствуйте! Чем могу помочь?")
 
     else:
-        await message.answer("Извините, пока я не знаю ответа на этот вопрос.")
+        response = model.generate_content(
+            f"""
+Ты администратор хостела в Астане.
+Отвечай вежливо и кратко.
+Если не знаешь ответа, так и скажи.
+
+Вопрос клиента:
+{message.text}
+"""
+        )
+
+        await message.answer(response.text)
 
 
 async def main():
     await dp.start_polling(bot)
+
+
+
+
+
+
+
+
 
 
 def run_bot():
